@@ -5,7 +5,7 @@ import './global.css';
 export default function App() {
   return (
     <View className='flex-1 items-center justify-center bg-white'> 
-        <Text>Hello world</Text>
+        <Text>Hello worlld</Text>
         <StatusBar barStyle="dark-content" />
     </View>
   );
