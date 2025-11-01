@@ -10,15 +10,17 @@
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
     "web": "expo start --web"
   },
-  "dependencies": {
+"dependencies": {
     "expo": "^54.0.0",
     "expo-constants": "~18.0.10",
+    "expo-font": "~13.0.1",
     "expo-linking": "~8.0.8",
     "expo-navigation-bar": "~5.0.9",
     "expo-router": "~6.0.14",
+    "expo-splash-screen": "~0.29.18",
     "expo-status-bar": "~3.0.8",
     "nativewind": "latest",
-    "react": "19.1.0",
+    "react": "18.3.1",
     "react-native": "0.81.5",
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "~5.6.0",
@@ -27,7 +29,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@types/react": "~19.1.10",
+    "@types/react": "~18.3.12",
     "eslint": "^9.25.1",
     "eslint-config-expo": "~10.0.0",
     "eslint-config-prettier": "^10.1.8",
