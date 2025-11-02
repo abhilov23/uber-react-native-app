@@ -6,5 +6,6 @@ module.exports = function (api) {
       ['babel-preset-expo', { jsxImportSource: 'nativewind' }], 
       'nativewind/babel'
     ],
+    // Removed reanimated plugin - was causing crashes
   };
 };

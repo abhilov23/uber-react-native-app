@@ -1,12 +1,44 @@
-import { useAuth } from "@clerk/clerk-expo";
-import { Redirect } from "expo-router";
+import { View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const Page = () => {
-  const { isSignedIn } = useAuth();
+export default function Home() {
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 justify-center items-center px-5">
+        {/* Icon */}
+        <View className="w-48 h-48 bg-blue-100 rounded-full justify-center items-center mb-8">
+          <Text className="text-7xl">🚗</Text>
+        </View>
 
-  if (isSignedIn) return <Redirect href="/(root)/(tabs)/home" />;
+        {/* Title */}
+        <Text className="text-4xl font-bold text-center mb-3">
+          Welcome to Uber
+        </Text>
+        
+        {/* Subtitle */}
+        <Text className="text-lg text-gray-600 text-center mb-12 px-6">
+          Your ride, your way. Book in seconds.
+        </Text>
 
-  return <Redirect href="/(auth)/welcome" />;
-};
+        {/* Buttons */}
+        <View className="w-full space-y-4">
+          <TouchableOpacity 
+            className="w-full bg-blue-600 rounded-full py-4"
+          >
+            <Text className="text-white text-lg font-bold text-center">
+              Get Started
+            </Text>
+          </TouchableOpacity>
 
-export default Page;
+          <TouchableOpacity 
+            className="w-full bg-white border-2 border-blue-600 rounded-full py-4"
+          >
+            <Text className="text-blue-600 text-lg font-bold text-center">
+              Sign In
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}

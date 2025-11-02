@@ -1,57 +1,64 @@
-import { ClerkLoaded, ClerkProvider } from "@clerk/clerk-expo";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import "react-native-reanimated";
-import { LogBox } from "react-native";
+import { Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect, useState } from 'react';
+import '../global.css';
 
-import { tokenCache } from "@/lib/auth";
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+// Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
-const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
-
-if (!publishableKey) {
-  throw new Error(
-    "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env",
-  );
-}
-
-LogBox.ignoreLogs(["Clerk:"]);
-
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [appIsReady, setAppIsReady] = useState(false);
+  
+  const [loaded, error] = useFonts({
     "Jakarta-Bold": require("../assets/fonts/PlusJakartaSans-Bold.ttf"),
     "Jakarta-ExtraBold": require("../assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
     "Jakarta-ExtraLight": require("../assets/fonts/PlusJakartaSans-ExtraLight.ttf"),
     "Jakarta-Light": require("../assets/fonts/PlusJakartaSans-Light.ttf"),
     "Jakarta-Medium": require("../assets/fonts/PlusJakartaSans-Medium.ttf"),
-    Jakarta: require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
+    "Jakarta-Regular": require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
     "Jakarta-SemiBold": require("../assets/fonts/PlusJakartaSans-SemiBold.ttf"),
   });
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    async function prepare() {
+      try {
+        if (error) {
+          console.error('Font loading error:', error);
+        }
+        
+        if (loaded || error) {
+          // Force splash screen to show for at least 2 seconds
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          setAppIsReady(true);
+        }
+      } catch (e) {
+        console.warn('Error during app preparation:', e);
+      }
     }
-  }, [loaded]);
 
-  if (!loaded) {
+    prepare();
+  }, [loaded, error]);
+
+  useEffect(() => {
+    async function hideSplash() {
+      if (appIsReady) {
+        await SplashScreen.hideAsync();
+      }
+    }
+
+    hideSplash();
+  }, [appIsReady]);
+
+  if (!appIsReady) {
     return null;
   }
 
   return (
-    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-      <ClerkLoaded>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(root)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </ClerkLoaded>
-    </ClerkProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="+not-found" />
+    </Stack>
   );
 }
