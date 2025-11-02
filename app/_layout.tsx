@@ -1,15 +1,13 @@
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import '../global.css';
 
-// Prevent the splash screen from auto-hiding
+// Prevent the splash screen from auto-hiding before asset loading is complete
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [appIsReady, setAppIsReady] = useState(false);
-  
   const [loaded, error] = useFonts({
     "Jakarta-Bold": require("../assets/fonts/PlusJakartaSans-Bold.ttf"),
     "Jakarta-ExtraBold": require("../assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
@@ -21,43 +19,33 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        if (error) {
-          console.error('Font loading error:', error);
-        }
-        
-        if (loaded || error) {
-          // Force splash screen to show for at least 2 seconds
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          
-          setAppIsReady(true);
-        }
-      } catch (e) {
-        console.warn('Error during app preparation:', e);
-      }
+    if (error) {
+      console.error('Font loading error:', error);
+      // Hide splash screen even on error
+      SplashScreen.hideAsync();
     }
-
-    prepare();
-  }, [loaded, error]);
+  }, [error]);
 
   useEffect(() => {
-    async function hideSplash() {
-      if (appIsReady) {
-        await SplashScreen.hideAsync();
-      }
+    if (loaded) {
+      // Hide splash screen once fonts are loaded
+      // Add a small delay to ensure smooth transition
+      setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 1000);
     }
+  }, [loaded]);
 
-    hideSplash();
-  }, [appIsReady]);
-
-  if (!appIsReady) {
+  // Don't render anything until fonts are loaded
+  if (!loaded && !error) {
     return null;
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(root)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
     </Stack>
   );
